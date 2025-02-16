@@ -1,8 +1,7 @@
-﻿namespace Api.Domain.Models
+﻿namespace Api.Features.Announcements.Commands.CreateAnnouncement
 {
-    public class Announcement
+    public class CreateAnnouncementDto
     {
-        public Guid Id { get; set; }
         public double Price { get; set; }
         public string Description { get; set; }
         public string City { get; set; }

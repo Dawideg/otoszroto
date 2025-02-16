@@ -1,8 +1,7 @@
-﻿namespace Api.Domain.Models
+﻿namespace Api.Features.Announcements.Commands.DeleteAnnouncement
 {
-    public class Announcement
+    public class DeleteAnnouncementResponse
     {
-        public Guid Id { get; set; }
         public double Price { get; set; }
         public string Description { get; set; }
         public string City { get; set; }
