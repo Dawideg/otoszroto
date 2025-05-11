@@ -1,8 +1,19 @@
+using Api.Domain.Models;
 using Api.Infrastructure.Context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication()
+    .AddCookie(IdentityConstants.ApplicationScheme);
+
+builder.Services.AddIdentityCore<User>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddApiEndpoints();
 
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
@@ -43,9 +54,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
+app.MapIdentityApi<User>();
 
 app.MapControllers();
+
+app.MapGet("/users/me", async (ClaimsPrincipal claims, ApplicationDbContext context) => {
+    string userId = claims.Claims.First(c=>c.Type == ClaimTypes.NameIdentifier).Value;
+    return await context.Users.FindAsync(userId);
+})
+.RequireAuthorization();
 
 app.Run();
