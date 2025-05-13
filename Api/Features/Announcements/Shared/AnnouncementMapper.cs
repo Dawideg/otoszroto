@@ -12,7 +12,7 @@ namespace Api.Features.Announcements.Shared
     {
         public AnnouncementMapper()
         {
-            CreateMap<Announcement, GetAllAnouncementsDto>();
+            CreateMap<Announcement, GetAnnouncementsDto>();
             CreateMap<CreateAnnouncementRequest, Announcement>();
             CreateMap<Announcement, CreateAnnouncementDto>();
             CreateMap<Announcement, GetAnnouncementResponse>();

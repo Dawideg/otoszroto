@@ -1,4 +1,7 @@
-﻿using Api.Infrastructure.Context;
+﻿using Api.Domain.Models;
+using Api.Features.Announcements.Shared;
+using Api.Features.Common.FilterAndSortFunctions;
+using Api.Infrastructure.Context;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
@@ -7,11 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Api.Features.Announcements.Queries.GetAllAnouncements
 {
-    public class GetAllAnnouncementsQuery : IRequest<List<GetAllAnouncementsDto>>
+    public class GetAllAnnouncementsQuery : IRequest<List<GetAnnouncementsDto>>
     {
+        public AnnouncementQueryObject QueryObject { get; set; } 
     }
 
-    public class GetAllAnnouncementsQueryHandler : IRequestHandler<GetAllAnnouncementsQuery, List<GetAllAnouncementsDto>>
+    public class GetAllAnnouncementsQueryHandler : IRequestHandler<GetAllAnnouncementsQuery, List<GetAnnouncementsDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -22,10 +26,22 @@ namespace Api.Features.Announcements.Queries.GetAllAnouncements
             _mapper = mapper;
         }
 
-        public async Task<List<GetAllAnouncementsDto>> Handle(GetAllAnnouncementsQuery request, CancellationToken cancellationToken)
+        public async Task<List<GetAnnouncementsDto>> Handle(GetAllAnnouncementsQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Announcements
-                .ProjectTo<GetAllAnouncementsDto>(_mapper.ConfigurationProvider)
+            if (request.QueryObject == null)
+            {
+                throw new InvalidOperationException("QueryObject cannot be null.");
+            }
+            var query = _context.Announcements.AsQueryable();
+
+            query = query.ApplyFilters(request);
+
+            query = query.ApplySorting(request);
+
+            return await query
+                .ProjectTo<GetAnnouncementsDto>(_mapper.ConfigurationProvider)
+                .Skip((request.QueryObject.PageNumber-1)*request.QueryObject.PageSize)
+                .Take(request.QueryObject.PageSize)
                 .ToListAsync();
         }
     }

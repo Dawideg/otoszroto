@@ -7,9 +7,9 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication()
+builder.Services.AddAuthentication("Identity.Application")
     .AddCookie(IdentityConstants.ApplicationScheme);
+builder.Services.AddAuthorization();
 
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -35,6 +35,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
+//dla niezalogowanych uzytkownikow
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
+});
+
 var app = builder.Build();
 
 app.UseCors(policy =>
@@ -54,9 +69,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapIdentityApi<User>();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
+app.MapIdentityApi<User>();
 
 app.MapGet("/users/me", async (ClaimsPrincipal claims, ApplicationDbContext context) => {
     string userId = claims.Claims.First(c=>c.Type == ClaimTypes.NameIdentifier).Value;

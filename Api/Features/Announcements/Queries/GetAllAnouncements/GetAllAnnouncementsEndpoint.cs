@@ -1,11 +1,12 @@
-﻿using Ardalis.ApiEndpoints;
+﻿using Api.Features.Announcements.Shared;
+using Ardalis.ApiEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Api.Features.Announcements.Queries.GetAllAnouncements
 {
-    public class GetAllAnnouncementsEndpoint : EndpointBaseAsync.WithoutRequest.WithActionResult<List<GetAllAnouncementsDto>>
+    public class GetAllAnnouncementsEndpoint : EndpointBaseAsync.WithRequest<AnnouncementQueryObject>.WithActionResult<List<GetAnnouncementsDto>>
     {
         private readonly IMediator _mediator;
 
@@ -19,9 +20,9 @@ namespace Api.Features.Announcements.Queries.GetAllAnouncements
             Summary = "Browse Announcements",
             Tags = new[] { "Announcements" })
         ]
-        public override async Task<ActionResult<List<GetAllAnouncementsDto>>> HandleAsync(CancellationToken cancellationToken = default)
+        public override async Task<ActionResult<List<GetAnnouncementsDto>>> HandleAsync([FromQuery] AnnouncementQueryObject queryObject, CancellationToken cancellationToken = default)
         {
-            return Ok(await _mediator.Send(new GetAllAnnouncementsQuery { }));
+            return Ok(await _mediator.Send(new GetAllAnnouncementsQuery {QueryObject = queryObject }));
         }
     }
 }

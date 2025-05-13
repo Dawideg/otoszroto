@@ -2,6 +2,7 @@
 {
     public class CreateAnnouncementDto
     {
+        public Guid UserId { get; set; }
         public double Price { get; set; }
         public string Description { get; set; }
         public string City { get; set; }
