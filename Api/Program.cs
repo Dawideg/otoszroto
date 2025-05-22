@@ -1,11 +1,17 @@
 using Api.Domain.Models;
+using Api.Features.Announcements.Services.BlobStorage;
 using Api.Infrastructure.Context;
+using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 builder.Services.AddAuthentication("Identity.Application")
     .AddCookie(IdentityConstants.ApplicationScheme);
@@ -34,6 +40,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+
+builder.Services.AddSingleton<IBlobService, BlobService>();
+builder.Services.AddSingleton(serviceProvider => {
+    var config = serviceProvider.GetRequiredService<IConfiguration>();
+    return new BlobServiceClient(config.GetConnectionString("BlobStorage"));
+});
+
 
 //dla niezalogowanych uzytkownikow
 builder.Services.ConfigureApplicationCookie(options =>
@@ -81,5 +94,27 @@ app.MapGet("/users/me", async (ClaimsPrincipal claims, ApplicationDbContext cont
     return await context.Users.FindAsync(userId);
 })
 .RequireAuthorization();
+
+app.MapPost("images", async(IFormFile file, IBlobService blobService) => { 
+    using Stream stream = file.OpenReadStream();
+    Guid fileId = await blobService.UploadAsync(stream, file.ContentType);
+    return Results.Ok(fileId);
+})
+    .WithTags("Files")
+    .DisableAntiforgery();
+
+app.MapGet("files/{fileId}", async (Guid fileId, IBlobService blobService) => {
+    FileResponse fileResponse = await blobService.DownloadAsync(fileId);
+    return Results.File(fileResponse.Stream, fileResponse.ContentType);
+})
+    .WithTags("Files")
+    .DisableAntiforgery();
+
+app.MapDelete("files/{fileId}", async (Guid fileId, IBlobService blobService) => {
+    await blobService.DeleteAsync(fileId);
+    return Results.NoContent();
+})
+    .WithTags("Files")
+    .DisableAntiforgery();
 
 app.Run();

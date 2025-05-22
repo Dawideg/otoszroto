@@ -1,4 +1,6 @@
-﻿namespace Api.Domain.Models
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Api.Domain.Models
 {
     public class Announcement
     {
