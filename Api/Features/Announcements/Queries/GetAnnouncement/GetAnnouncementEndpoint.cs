@@ -15,7 +15,7 @@ namespace Api.Features.Announcements.Queries.GetAnnouncement
         }
         [HttpGet("api/announcements/{id}")]
         [SwaggerOperation(
-           Summary = "Create Announcement",
+           Summary = "Get Announcement",
            Tags = new[] { "Announcements" })
        ]
 

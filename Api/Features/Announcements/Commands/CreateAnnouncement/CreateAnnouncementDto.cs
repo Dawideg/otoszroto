@@ -3,8 +3,10 @@
     public class CreateAnnouncementDto
     {
         public Guid UserId { get; set; }
+        public List<string> ImageUrls { get; set; } = new();
         public double Price { get; set; }
         public string Description { get; set; }
+        public string Version { get; set; }
         public string City { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }

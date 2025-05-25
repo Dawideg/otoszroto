@@ -11,6 +11,7 @@ namespace Api.Domain.Models
         public string City { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }
+        public string Version { get; set; }
         public string Generation { get; set; }
         public string BodyType { get; set; }
         public int Mileage { get; set; }
@@ -23,5 +24,6 @@ namespace Api.Domain.Models
         public string VinNumber { get; set; }
         public string Condition { get; set; }
         public bool AccidentFree { get; set; }
+        public List<string> ImageUrls { get; set; } = new();
     }
 }

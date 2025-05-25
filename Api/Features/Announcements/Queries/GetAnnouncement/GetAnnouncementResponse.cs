@@ -1,9 +1,13 @@
-﻿namespace Api.Features.Announcements.Queries.GetAnnouncement
+﻿using Api.Domain.Models;
+using Api.Features.Announcements.Queries.Common;
+
+namespace Api.Features.Announcements.Queries.GetAnnouncement
 {
     public class GetAnnouncementResponse
     {
         public double Price { get; set; }
         public string Description { get; set; }
+        public string Version { get; set; }
         public string City { get; set; }
         public string Brand { get; set; }
         public string Model { get; set; }
@@ -19,5 +23,8 @@
         public string VinNumber { get; set; }
         public string Condition { get; set; }
         public bool AccidentFree { get; set; }
+        public List<string> ImageUrls { get; set; } = new();
+        public UserDto UserData { get; set; } 
+
     }
 }

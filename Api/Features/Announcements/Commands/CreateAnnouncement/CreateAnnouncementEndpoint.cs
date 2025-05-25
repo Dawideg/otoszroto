@@ -6,13 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using System.Net;
-using Api.Migrations;
 using System.Security.Claims;
 
 namespace Api.Features.Announcements.Commands.CreateAnnouncement
 {
     [ApiController]
-    [Authorize]
     public class CreateAnnouncementEndpoint : EndpointBaseAsync.WithRequest<CreateAnnouncementRequest>.WithActionResult<CreateAnnouncementDto>
     {
         private readonly IMediator _mediator;
@@ -28,7 +26,7 @@ namespace Api.Features.Announcements.Commands.CreateAnnouncement
             Summary = "Create Announcement",
             Tags = new[] { "Announcements" })
         ]
-        public async override Task<ActionResult<CreateAnnouncementDto>> HandleAsync(CreateAnnouncementRequest request, CancellationToken cancellationToken = default)
+        public async override Task<ActionResult<CreateAnnouncementDto>> HandleAsync([FromForm] CreateAnnouncementRequest request, CancellationToken cancellationToken = default)
         {
 
             return Ok( await _mediator.Send(new CreateAnnouncementCommand { announcementRequest = request, CurrentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) }));

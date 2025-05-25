@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -7,11 +8,42 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Api.Migrations
 {
     /// <inheritdoc />
-    public partial class identity : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Announcements",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    City = table.Column<string>(type: "text", nullable: false),
+                    Brand = table.Column<string>(type: "text", nullable: false),
+                    Model = table.Column<string>(type: "text", nullable: false),
+                    Version = table.Column<string>(type: "text", nullable: false),
+                    Generation = table.Column<string>(type: "text", nullable: false),
+                    BodyType = table.Column<string>(type: "text", nullable: false),
+                    Mileage = table.Column<int>(type: "integer", nullable: false),
+                    EngineCapacity = table.Column<double>(type: "double precision", nullable: false),
+                    Horsepower = table.Column<int>(type: "integer", nullable: false),
+                    Gearbox = table.Column<string>(type: "text", nullable: false),
+                    Powertrain = table.Column<string>(type: "text", nullable: false),
+                    FuelType = table.Column<string>(type: "text", nullable: false),
+                    YearOfProduction = table.Column<int>(type: "integer", nullable: false),
+                    VinNumber = table.Column<string>(type: "text", nullable: false),
+                    Condition = table.Column<string>(type: "text", nullable: false),
+                    AccidentFree = table.Column<bool>(type: "boolean", nullable: false),
+                    ImageUrls = table.Column<List<string>>(type: "text[]", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Announcements", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -31,6 +63,9 @@ namespace Api.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Surname = table.Column<string>(type: "text", nullable: false),
+                    IsCompany = table.Column<bool>(type: "boolean", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -198,6 +233,9 @@ namespace Api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Announcements");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

@@ -11,11 +11,10 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
-builder.Services.AddAuthentication("Identity.Application")
-    .AddCookie(IdentityConstants.ApplicationScheme);
 builder.Services.AddAuthorization();
+builder.Services.AddAuthentication()
+    .AddCookie(IdentityConstants.ApplicationScheme);
+
 
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>()

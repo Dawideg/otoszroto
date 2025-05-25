@@ -18,7 +18,7 @@ namespace Api.Features.Announcements.Queries.GetUsersAnnouncements
 
         [HttpGet("api/usersAnnouncements")]
         [SwaggerOperation(
-            Summary = "Browse Announcements",
+            Summary = "Browse logged user Announcements",
             Tags = new[] { "Announcements" })
         ]
         public override async Task<ActionResult<List<GetAnnouncementsDto>>> HandleAsync(CancellationToken cancellationToken = default)
