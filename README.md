@@ -74,14 +74,14 @@ Frontend stworzono w React z użyciem Bootstrap do stylizacji.
   4. Aby dostać się do Swagger UI, dodaj do adresu URL:
     `/swagger/index.html`
 
---
+
 
 ## Upewnij się, że zmienne środowiskowe są poprawnie skonfigurowane (plik `appsettings.json`), np.:
     • `DefaultConnection` – connection string do bazy danych
     • `BlobStorage` – dane dostępowe do konta Azure
     • `Deepseek.ApiKey` – klucz do modelu AI
 
---
+
    
 ## Uruchom azurite przez npm (jeśli stawiasz bazę azure lokalnie):
     1. `npm install -g azurite`
