@@ -37,13 +37,13 @@ const FiltersBar = ({ onSearch }) => {
       brand: "",
       model: "",
       bodyType: "",
-      priceFrom: "",
-      priceTo: "",
-      yearFrom: "",
-      yearTo: "",
+      minPrice: 0,
+      maxPrice: 2147483647,
+      startYear: 0,
+      endYear: 3000,
       fuelType: "",
-      mileageFrom: "",
-      mileageTo: "",
+      minMileage: 0,
+      maxMileage: 2147483647,
     });
   };
   return (
@@ -96,8 +96,8 @@ const FiltersBar = ({ onSearch }) => {
               type="number"
               className="form-control"
               placeholder="Cena od"
-              name="priceFrom"
-              value={formData.priceFrom}
+              name="minPrice"
+              value={formData.minPrice}
               onChange={handleChange}
             />
           </div>
@@ -106,8 +106,8 @@ const FiltersBar = ({ onSearch }) => {
               type="number"
               className="form-control"
               placeholder="Cena do"
-              name="priceTo"
-              value={formData.priceTo}
+              name="maxPrice"
+              value={formData.maxPrice}
               onChange={handleChange}
             />
           </div>
@@ -117,8 +117,8 @@ const FiltersBar = ({ onSearch }) => {
               type="number"
               className="form-control"
               placeholder="Rok od"
-              name="yearFrom"
-              value={formData.yearFrom}
+              name="startYear"
+              value={formData.startYear}
               onChange={handleChange}
             />
           </div>
@@ -127,8 +127,8 @@ const FiltersBar = ({ onSearch }) => {
               type="number"
               className="form-control"
               placeholder="Rok do"
-              name="yearTo"
-              value={formData.yearTo}
+              name="endYear"
+              value={formData.endYear}
               onChange={handleChange}
             />
           </div>
@@ -171,9 +171,6 @@ const FiltersBar = ({ onSearch }) => {
           <div className="col-md-6 d-flex">
             <button type="submit" className="btn otomotobtn1 me-2">
               Szukaj
-            </button>
-            <button className="btn otomotobtn2" onClick={handleReset}>
-              Wyczyść filtry
             </button>
           </div>
         </div>

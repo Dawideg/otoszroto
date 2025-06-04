@@ -32,7 +32,7 @@ const AnnoucnementListElement = ({ data }) => {
                 <i className="bi bi-fuel-pump"></i> {data.fuelType}
               </li>
               <li className="list-inline-item">
-                <i className="bi bi-gear"></i> {data.gearbox}
+                <i className="bi bi-gear"></i> {data.horsepower} KM
               </li>
               <li className="list-inline-item">
                 <i className="bi bi-calendar"></i> {data.yearOfProduction}

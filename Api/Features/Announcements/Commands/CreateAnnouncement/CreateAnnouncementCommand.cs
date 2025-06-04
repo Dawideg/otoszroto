@@ -28,6 +28,9 @@ namespace Api.Features.Announcements.Commands.CreateAnnouncement
         public async Task<CreateAnnouncementDto> Handle(CreateAnnouncementCommand request, CancellationToken cancellationToken)
         {
             var announcement = _mapper.Map<Announcement>(request.announcementRequest);
+            if (announcement.UserId == null) {
+                throw new UnauthorizedAccessException("Nie zalogowano");
+            }
             announcement.UserId = Guid.Parse(request.CurrentUserId);
             foreach (var image in request.announcementRequest.Images)
             {

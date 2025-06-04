@@ -12,7 +12,7 @@ namespace Api.Features.Announcements.Queries.GetAllAnouncements
 {
     public class GetAllAnnouncementsQuery : IRequest<List<GetAnnouncementsDto>>
     {
-        public AnnouncementQueryObject QueryObject { get; set; } 
+        public AnnouncementQueryObject QueryObject { get; set; }
     }
 
     public class GetAllAnnouncementsQueryHandler : IRequestHandler<GetAllAnnouncementsQuery, List<GetAnnouncementsDto>>
@@ -38,11 +38,23 @@ namespace Api.Features.Announcements.Queries.GetAllAnouncements
 
             query = query.ApplySorting(request);
 
+            query = query.FilterByPrice(request);
+
+            query = query.FilterByMileage(request);
+            query = query.FilterByYear(request);
+
+
+
+
             return await query
                 .ProjectTo<GetAnnouncementsDto>(_mapper.ConfigurationProvider)
-                .Skip((request.QueryObject.PageNumber-1)*request.QueryObject.PageSize)
+                .Skip((request.QueryObject.PageNumber - 1) * request.QueryObject.PageSize)
                 .Take(request.QueryObject.PageSize)
                 .ToListAsync();
         }
+       
     }
+
+
+
 }

@@ -61,6 +61,8 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
+builder.Services.AddHttpClient();
+
 
 var app = builder.Build();
 
