@@ -1,9 +1,12 @@
-using Api.Domain.Models;
+﻿using Api.Domain.Models;
 using Api.Features.Announcements.Services.BlobStorage;
+using Api.Features.Chat;
+using Api.Features.Chat.Helpers;
 using Api.Infrastructure.Context;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -14,7 +17,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication()
     .AddCookie(IdentityConstants.ApplicationScheme);
-
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;  // HTTPS wymagana
+    options.Cookie.SameSite = SameSiteMode.None;              // pozwala na cross-site wysyłanie
+});
 
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -62,14 +70,18 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 builder.Services.AddHttpClient();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, NameIdentifierUserIdProvider>();
+
+var app = builder.Build();  
 
 
-var app = builder.Build();
 
-app.UseCors(policy =>
-    policy.AllowAnyOrigin()
+app.UseCors(policy =>   
+    policy.WithOrigins("https://localhost:5173")
           .AllowAnyMethod()
           .AllowAnyHeader()
+          .AllowCredentials()
 );
 
 
@@ -81,11 +93,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.MapSwagger();
 }
-
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<ChatHub>("/chatHub");
 
 app.MapControllers();
 app.MapIdentityApi<User>();

@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import CarListView from "./components/MainView/CarListView";
-import SingleAnnouncementView from "./components/SingleAnnouncementView/SingleAnnouncementView";
 import MainLayout from "./components/MainLayout";
+import SingleAnnouncementView from "./components/SingleAnnouncementView/SingleAnnouncementView";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import LoginView from "./components/auth/Login/LoginView";
+import RegisterView from "./components/auth/Register/RegisterView";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -20,6 +22,8 @@ function App() {
               path="announcement/:id"
               element={<SingleAnnouncementView />}
             />
+            <Route path="login" element={<LoginView />} />
+            <Route path="register" element={<RegisterView />} />
           </Route>
         </Routes>
       </BrowserRouter>

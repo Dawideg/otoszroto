@@ -1,7 +1,7 @@
 .chat-container {
   position: fixed;
   bottom: 40px;
-  right: 20px;
+  left: 20px;
   z-index: 9999;
   width: 320px;
   transition: transform 0.3s ease-in-out;

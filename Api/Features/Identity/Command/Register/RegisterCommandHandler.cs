@@ -1,6 +1,8 @@
 ﻿using Api.Domain.Models;
+using Api.Features.Chat;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using System.ComponentModel.DataAnnotations;
 
 namespace Api.Features.Identity.Command.Register

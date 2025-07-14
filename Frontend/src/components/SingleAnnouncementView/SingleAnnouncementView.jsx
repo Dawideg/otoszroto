@@ -1,14 +1,20 @@
 import React, { useEffect, useRef, useState, UseState } from "react";
 import { useParams } from "react-router-dom";
-import { getData } from "../../api/getData";
+import { fetchUser, getData } from "../../api/getData";
 import ChatWidget from "./ChatWidget";
+import { getDataBodyType } from "../../api/getData";
+import AnnouncementBox from "./AnnouncementBox";
+import UsersChat from "../chat/UsersChat";
 const SingleAnnouncementView = () => {
   const [announcement, setAnnouncement] = useState();
   const [images, setImages] = useState([]);
   const [currentImage, setCurrentImage] = useState(0);
   const [showNumber, setShowNumber] = useState(false);
   const { id } = useParams();
+  const [feedAnnouncements, setFeedAnnouncements] = useState([]);
   const IMAGES_URL = import.meta.env.VITE_IMAGES_URL;
+  const [showChat, setShowChat] = useState(false);
+  const [initialReceiverId, setInitialReceiverId] = useState(null);
 
   useEffect(() => {
     getData(`announcements/${id}`)
@@ -20,6 +26,15 @@ const SingleAnnouncementView = () => {
         console.error("Error fetching announcement:", error);
       });
   }, [id]);
+  useEffect(() => {
+    getDataBodyType("announcements", announcement?.bodyType)
+      .then((data) => {
+        setFeedAnnouncements(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [announcement]);
   if (announcement === undefined) {
     return <div className="container mt-5">Ładowanie ogłoszenia...</div>;
   }
@@ -90,6 +105,15 @@ const SingleAnnouncementView = () => {
               {announcement.city}
             </a>
           </p>
+          <button
+            className="btn btn-outline-primary w-100"
+            onClick={() => {
+              setInitialReceiverId(announcement.userData.id);
+              setShowChat(true);
+            }}
+          >
+            Napisz do sprzedawcy
+          </button>
 
           {/* Chat Widget */}
           <ChatWidget
@@ -140,7 +164,40 @@ const SingleAnnouncementView = () => {
         <div className="text-danger fw-bold" style={{ cursor: "pointer" }}>
           Zgłoś
         </div>
+        <h4 className="fw-bold mb-3 mt-4">Zobacz także:</h4>
+        <div>
+          {feedAnnouncements
+            ? feedAnnouncements.map(
+                (item) =>
+                  item.id != announcement.id && (
+                    <AnnouncementBox key={item.id} announcement={item} />
+                  )
+              )
+            : "Ładowanie podobnych ogłoszeń..."}
+        </div>
       </div>
+      {showChat && (
+        <div
+          className="position-fixed bottom-0 end-0 m-4 border bg-white shadow rounded"
+          style={{ width: "400px", height: "500px", zIndex: 1050 }}
+        >
+          {/* Nagłówek */}
+          <div className="d-flex justify-content-between align-items-center p-2 border-bottom bg-light rounded-top">
+            <strong>Czat</strong>
+            <button
+              type="button"
+              className="btn-close"
+              aria-label="Zamknij"
+              onClick={() => setShowChat(false)}
+            ></button>
+          </div>
+
+          {/* Treść */}
+          <div className="h-100 overflow-hidden">
+            <UsersChat receiverId={initialReceiverId} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

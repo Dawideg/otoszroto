@@ -33,9 +33,13 @@ namespace Api.Features.Common.FilterAndSortFunctions
                     Expression filterExpression;
                     if (entityProperty.PropertyType == typeof(string))
                     {
-                        var likeMethod = typeof(DbFunctionsExtensions).GetMethod(nameof(DbFunctionsExtensions.Like), new[] { typeof(DbFunctions), typeof(string), typeof(string) });
-                        var efFunctions = Expression.Constant(EF.Functions);
-                        filterExpression = Expression.Call(likeMethod, efFunctions, propertyAccess, Expression.Constant($"%{value}%"));
+                        var notNull = Expression.NotEqual(propertyAccess, Expression.Constant(null));
+                        var toLowerMethod = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes);
+                        var propertyToLower = Expression.Call(propertyAccess, toLowerMethod);
+                        var valueToLower = Expression.Constant(value.ToString().ToLower());
+                        var containsMethod = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
+                        var containsCall = Expression.Call(propertyToLower, containsMethod, valueToLower);
+                        filterExpression = Expression.AndAlso(notNull, containsCall);
                     }
                     else if (entityProperty.PropertyType == typeof(bool) || entityProperty.PropertyType == typeof(bool?))
                     {
@@ -49,12 +53,10 @@ namespace Api.Features.Common.FilterAndSortFunctions
                     {
                         filterExpression = Expression.LessThanOrEqual(propertyAccess, Expression.Constant(value, entityProperty.PropertyType));
                     }
-                    //kiedy wykrywa relacje do innego obiektu
-                    else if (!entityProperty.PropertyType.IsValueType)
+                    else if (!entityProperty.PropertyType.IsValueType && entityProperty.PropertyType != typeof(string))
                     {
                         var subParameter = Expression.Parameter(entityProperty.PropertyType, "c");
                         var subFilters = new List<Expression>();
-                        //funkcja wywolana dla zagniezdzonego obiektu 
                         Filter(entityProperty.PropertyType, subParameter, value, subFilters);
 
                         if (subFilters.Any())
@@ -84,7 +86,6 @@ namespace Api.Features.Common.FilterAndSortFunctions
 
             Filter(typeof(T), parameter, queryObject, filters);
 
-
             if (filters.Any())
             {
                 var combinedFilter = filters.Aggregate(Expression.AndAlso);
@@ -94,6 +95,7 @@ namespace Api.Features.Common.FilterAndSortFunctions
 
             return query;
         }
+
 
 
         public static IQueryable<T> ApplySorting<T>(this IQueryable<T> query, object request)

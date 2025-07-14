@@ -5,6 +5,7 @@ namespace Api.Features.Announcements.Queries.GetAnnouncement
 {
     public class GetAnnouncementResponse
     {
+        public Guid Id { get; set; }
         public double Price { get; set; }
         public string Description { get; set; }
         public string Version { get; set; }

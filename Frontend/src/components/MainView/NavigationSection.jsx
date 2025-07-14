@@ -32,10 +32,14 @@ const NavigationSection = () => {
           <div className="collapse navbar-collapse me-4" id="navbarNav">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
-                <Link className="btn p-2 me-2 otomotobtn1">Zaloguj się</Link>
+                <Link to={"/login"} className="btn p-2 me-2 otomotobtn1">
+                  Zaloguj się
+                </Link>
               </li>
               <li className="nav-item">
-                <Link className="btn p-2 otomotobtn2">Dodaj ogłoszenie</Link>
+                <Link to={"/register"} className="btn p-2 otomotobtn2">
+                  Zarejestruj się
+                </Link>
               </li>
             </ul>
           </div>

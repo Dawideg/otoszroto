@@ -21,8 +21,9 @@ const AnnoucnementListElement = ({ data }) => {
               {data.brand} {data.model}
             </h5>
             <p className="text-muted small mb-2">
-              {data.engineCapacity}cm<sup>3</sup> • {data.horsepower}KM •{" "}
-              {data.version}{" "}
+              {data.engineCapacity}cm<sup>3</sup> •{" "}
+              {data.accidentFree ? "Bezwypadkowy" : "Powypadkowy"} •{" "}
+              {"Wersja: " + data.version}{" "}
             </p>
             <ul className="list-inline text-muted small">
               <li className="list-inline-item">

@@ -17,7 +17,7 @@ namespace Api.Features.Announcements.Queries.GetAnnouncement
     public class GetAnnouncementQueryHandler : IRequestHandler<GetAnnouncementQuery, GetAnnouncementResponse>
     {
         private readonly IApplicationDbContext _context;
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<User> _userManager;    
         private readonly IMapper _mapper;
 
         public GetAnnouncementQueryHandler(IApplicationDbContext context, IMapper mapper, UserManager<User> userManager)
