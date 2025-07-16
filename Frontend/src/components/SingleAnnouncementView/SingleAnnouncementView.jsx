@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState, UseState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { fetchUser, getData } from "../../api/getData";
 import ChatWidget from "./ChatWidget";
 import { getDataBodyType } from "../../api/getData";
 import AnnouncementBox from "./AnnouncementBox";
 import UsersChat from "../chat/UsersChat";
+import { useOutletContext } from "react-router-dom";
+
 const SingleAnnouncementView = () => {
   const [announcement, setAnnouncement] = useState();
   const [images, setImages] = useState([]);
@@ -15,6 +17,7 @@ const SingleAnnouncementView = () => {
   const IMAGES_URL = import.meta.env.VITE_IMAGES_URL;
   const [showChat, setShowChat] = useState(false);
   const [initialReceiverId, setInitialReceiverId] = useState(null);
+  const userData = useOutletContext();
 
   useEffect(() => {
     getData(`announcements/${id}`)
@@ -105,15 +108,31 @@ const SingleAnnouncementView = () => {
               {announcement.city}
             </a>
           </p>
-          <button
-            className="btn btn-outline-primary w-100"
-            onClick={() => {
-              setInitialReceiverId(announcement.userData.id);
-              setShowChat(true);
-            }}
-          >
-            Napisz do sprzedawcy
-          </button>
+          {userData ? (
+            userData.id !== announcement.userData.id ? (
+              <button
+                className="btn btn-outline-primary w-100"
+                onClick={() => {
+                  setInitialReceiverId(announcement.userData.id);
+                  setShowChat(true);
+                }}
+              >
+                Napisz do sprzedawcy
+              </button>
+            ) : null
+          ) : (
+            <Link to="/login">
+              <button
+                className="btn btn-outline-primary w-100"
+                onClick={() => {
+                  setInitialReceiverId(announcement.userData.id);
+                  setShowChat(true);
+                }}
+              >
+                Zaloguj się, aby napisać do sprzedawcy
+              </button>
+            </Link>
+          )}
 
           {/* Chat Widget */}
           <ChatWidget

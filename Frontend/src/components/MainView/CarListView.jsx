@@ -4,11 +4,12 @@ import { data } from "react-router-dom";
 import AnnoucnementListElement from "./AnnoucnementListElement";
 import NavigationSection from "./NavigationSection";
 import FiltersBar from "./FiltersBar";
+import { useEffect } from "react";
 
 const CarListView = () => {
   const [announcements, setAnnouncements] = useState([]);
 
-  useState(() => {
+  useEffect(() => {
     getData("announcements")
       .then((data) => {
         setAnnouncements(data);

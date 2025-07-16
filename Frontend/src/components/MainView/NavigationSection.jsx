@@ -1,20 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchUser } from "../../api/getData"; // Adjust the import path as necessary
 
-const NavigationSection = ({ showChat, setShowChat }) => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    fetchUser()
-      .then((user) => {
-        console.log("Pobrano użytkownika:", user);
-        setUser(user.name);
-      })
-      .catch((error) => {
-        console.error("Błąd pobierania użytkownika:", error);
-      });
-  }, []);
+const NavigationSection = ({ showChat, setShowChat, userData }) => {
   return (
     <div>
       <nav
@@ -44,8 +31,8 @@ const NavigationSection = ({ showChat, setShowChat }) => {
 
           <div className="collapse navbar-collapse me-4" id="navbarNav">
             <ul className="navbar-nav ms-auto align-items-center gap-2">
-              {user ? (
-                <li className="nav-item d-flex align-items-center">
+              {userData ? (
+                <div className="nav-item d-flex align-items-center">
                   <li className="nav-item">
                     <button
                       onClick={() => setShowChat(!showChat)}
@@ -55,9 +42,10 @@ const NavigationSection = ({ showChat, setShowChat }) => {
                     </button>
                   </li>
                   <p className="mb-0 ms-2 px-3 py-1 rounded border bg-light small fw-semibold shadow-sm">
-                    Zalogowano jako: <span className="text-dark">{user}</span>
+                    Zalogowano jako:{" "}
+                    <span className="text-dark">{userData.name}</span>
                   </p>
-                </li>
+                </div>
               ) : (
                 <>
                   <li className="nav-item">
