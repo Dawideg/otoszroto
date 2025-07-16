@@ -15,8 +15,12 @@ const LoginView = () => {
     e.preventDefault();
     login(loginData)
       .then(() => {
-        toast.success("Zalogowano pomyślnie");
-        window.location.href = "/";
+        toast.success("Zalogowano pomyślnie", {
+          onClose: () => {
+            window.location.href = "/";
+          },
+          autoClose: 1000,
+        });
       })
       .catch((error) => {
         console.error("Błąd logowania:", error);

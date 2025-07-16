@@ -39,7 +39,6 @@ export const register = async (params) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params),
   });
-  console.log(response.text());
   if (!response.ok) throw new Error("Błąd pobierania danych");
   let data = await response.json();
   return data;
