@@ -1,14 +1,33 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UsersChatList from "./UsersChatList";
 import UsersChat from "./UsersChat";
 
-const MessagesPage = () => {
+const MessagesPage = ({ onClose }) => {
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const wrapperRef = useRef(null); // Ref do całego komponentu
+
+  // Efekt: zamykanie po kliknięciu poza całym oknem czatu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        onClose(); // Zamyka cały MessagesPage
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [onClose]);
 
   return (
     <div
-      className="d-flex border rounded overflow-hidden shadow"
-      style={{ height: "90vh", maxHeight: "90vh" }}
+      ref={wrapperRef}
+      className="d-flex border rounded overflow-hidden shadow position-fixed top-50 start-50 translate-middle bg-white"
+      style={{
+        height: "90vh",
+        width: "80vw",
+        maxHeight: "90vh",
+        zIndex: 1050,
+      }}
     >
       {/* Lista użytkowników po lewej */}
       <div

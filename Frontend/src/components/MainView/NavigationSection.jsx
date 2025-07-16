@@ -29,14 +29,18 @@ const NavigationSection = ({ showChat, setShowChat }) => {
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse me-4">
-            <button onClick={() => setShowChat(!showChat)}>Chat</button>
-          </div>
-
           <div className="collapse navbar-collapse me-4" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
+            <ul className="navbar-nav ms-auto align-items-center gap-2">
               <li className="nav-item">
-                <Link to={"/login"} className="btn p-2 me-2 otomotobtn1">
+                <button
+                  onClick={() => setShowChat(!showChat)}
+                  className="btn p-2 otomotobtn1"
+                >
+                  {showChat ? "Zamknij czat" : "Czat"}
+                </button>
+              </li>
+              <li className="nav-item">
+                <Link to={"/login"} className="btn p-2 otomotobtn1">
                   Zaloguj się
                 </Link>
               </li>

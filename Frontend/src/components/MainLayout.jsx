@@ -9,7 +9,8 @@ const MainLayout = () => {
     <div className="d-flex flex-column min-vh-100">
       <NavigationSection showChat={showChat} setShowChat={setShowChat} />
       <main className="flex-fill">
-        {showChat && <MessagesPage />}
+        {showChat && <MessagesPage onClose={() => setShowChat(false)} />}
+
         <Outlet context={showChat} />
       </main>
     </div>

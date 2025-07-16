@@ -12,12 +12,10 @@ const UsersChat = ({ receiverId, setShowChat }) => {
 
   const messagesEndRef = useRef(null);
 
-  // Scroll na dół po każdej wiadomości
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Pobierz dane obecnie zalogowanego użytkownika
   useEffect(() => {
     const loadCurrentUser = async () => {
       try {
@@ -31,7 +29,6 @@ const UsersChat = ({ receiverId, setShowChat }) => {
     loadCurrentUser();
   }, []);
 
-  // Pobierz historię wiadomości dla wybranego użytkownika
   useEffect(() => {
     if (!selectedUser || !currentUserData) return;
 
@@ -40,7 +37,6 @@ const UsersChat = ({ receiverId, setShowChat }) => {
         const history = await fetchChatHistory(selectedUser);
         setMessages(history);
 
-        // Pobierz nazwę rozmówcy, jeśli jeszcze jej nie mamy
         const senderIds = new Set(history.map((m) => m.senderId));
         for (const id of senderIds) {
           if (!userNames[id]) {
@@ -56,7 +52,6 @@ const UsersChat = ({ receiverId, setShowChat }) => {
     loadHistory();
   }, [selectedUser, currentUserData]);
 
-  // Połączenie z SignalR
   useEffect(() => {
     if (!currentUserData) return;
 
@@ -115,11 +110,9 @@ const UsersChat = ({ receiverId, setShowChat }) => {
   };
 
   return (
-    <div
-      className="position-fixed bottom-0 end-0 m-4 border bg-white shadow rounded"
-      style={{ width: "400px", height: "500px", zIndex: 1050 }}
-    >
-      <div className="d-flex justify-content-between align-items-center p-2 border-bottom bg-light rounded-top">
+    <div className="d-flex flex-column h-100 w-100">
+      {/* Nagłówek */}
+      <div className="d-flex justify-content-between align-items-center p-2 border-bottom bg-light">
         <strong>
           {selectedUser && userNames[selectedUser]
             ? `Czat z ${userNames[selectedUser]}`
@@ -133,61 +126,57 @@ const UsersChat = ({ receiverId, setShowChat }) => {
         ></button>
       </div>
 
-      <div className="d-flex h-100">
-        <div className="d-flex flex-column flex-grow-1">
-          <div
-            className="flex-grow-1 p-2 overflow-auto"
-            style={{ backgroundColor: "#f8f9fa" }}
-          >
-            {currentUserData ? (
-              messages.length > 0 ? (
-                messages.map((m, idx) => {
-                  const isMe = m.senderId === currentUserData.id;
-                  const displayName = userNames[m.senderId] || m.senderId;
+      {/* Lista wiadomości */}
+      <div
+        className="flex-grow-1 p-2 overflow-auto"
+        style={{ backgroundColor: "#f8f9fa" }}
+      >
+        {currentUserData ? (
+          messages.length > 0 ? (
+            messages.map((m, idx) => {
+              const isMe = m.senderId === currentUserData.id;
+              return (
+                <div
+                  key={idx}
+                  className={`d-flex mb-2 ${
+                    isMe ? "justify-content-end" : "justify-content-start"
+                  }`}
+                >
+                  <div
+                    className={`p-2 rounded shadow-sm ${
+                      isMe ? "bg-primary text-white" : "bg-light"
+                    }`}
+                    style={{ maxWidth: "75%" }}
+                  >
+                    <div style={{ fontSize: "0.9rem" }}>{m.text}</div>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="text-muted">Brak wiadomości</div>
+          )
+        ) : (
+          <div className="text-muted">Ładowanie użytkownika...</div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
 
-                  return (
-                    <div
-                      key={idx}
-                      className={`d-flex mb-2 ${
-                        isMe ? "justify-content-end" : "justify-content-start"
-                      }`}
-                    >
-                      <div
-                        className={`p-2 rounded shadow-sm ${
-                          isMe ? "bg-primary text-white" : "bg-light"
-                        }`}
-                        style={{ maxWidth: "75%" }}
-                      >
-                        <div style={{ fontSize: "0.9rem" }}>{m.text}</div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="text-muted">Brak wiadomości</div>
-              )
-            ) : (
-              <div className="text-muted">Ładowanie użytkownika...</div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          <div className="border-top p-2 d-flex">
-            <input
-              type="text"
-              className="form-control me-2"
-              placeholder="Wpisz wiadomość..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") sendMessage();
-              }}
-            />
-            <button onClick={sendMessage} className="btn btn-primary">
-              Wyślij
-            </button>
-          </div>
-        </div>
+      {/* Pole do wpisywania wiadomości */}
+      <div className="border-top p-2 d-flex">
+        <input
+          type="text"
+          className="form-control me-2"
+          placeholder="Wpisz wiadomość..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") sendMessage();
+          }}
+        />
+        <button onClick={sendMessage} className="btn btn-primary">
+          Wyślij
+        </button>
       </div>
     </div>
   );
