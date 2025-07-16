@@ -78,3 +78,10 @@ export const fetchChatHistory = async (userId) => {
   if (!res.ok) throw new Error("Nie udało się pobrać wiadomości");
   return await res.json(); // [{ from, to, text, timestamp }]
 };
+export const fetchAllChatHistory = async () => {
+  const res = await fetch(`${API_URL}chat/history/`, {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Nie udało się pobrać wiadomości");
+  return await res.json(); // [{ from, to, text, timestamp }]
+};

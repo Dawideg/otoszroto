@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const NavigationSection = () => {
+const NavigationSection = ({ showChat, setShowChat }) => {
   return (
     <div>
       <nav
@@ -28,6 +28,10 @@ const NavigationSection = () => {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
+
+          <div className="collapse navbar-collapse me-4">
+            <button onClick={() => setShowChat(!showChat)}>Chat</button>
+          </div>
 
           <div className="collapse navbar-collapse me-4" id="navbarNav">
             <ul className="navbar-nav ms-auto">

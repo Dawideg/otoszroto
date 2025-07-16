@@ -17,7 +17,7 @@ namespace Api.Features.Identity.Query.GetChatHistory
         }
         [HttpGet("api/chat/history/{id}")]
         [SwaggerOperation(
-            Summary = "Browse chat history for user",
+            Summary = "Browse single chat history for user and receiver",
             Tags = new[] { "Chat" })
         ]
         public async override Task<ActionResult<List<ChatMessage>>> HandleAsync(Guid id, CancellationToken cancellationToken = default)

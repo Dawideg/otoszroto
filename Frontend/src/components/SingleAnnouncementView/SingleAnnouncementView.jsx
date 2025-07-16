@@ -194,7 +194,10 @@ const SingleAnnouncementView = () => {
 
           {/* Treść */}
           <div className="h-100 overflow-hidden">
-            <UsersChat receiverId={initialReceiverId} />
+            <UsersChat
+              receiverId={initialReceiverId}
+              setShowChat={setShowChat}
+            />
           </div>
         </div>
       )}
