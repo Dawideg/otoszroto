@@ -2,6 +2,8 @@ import { Outlet } from "react-router-dom";
 import NavigationSection from "./MainView/NavigationSection";
 import { useState } from "react";
 import MessagesPage from "./chat/MessagesPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const MainLayout = () => {
   const [showChat, setShowChat] = useState(false);
 
@@ -13,6 +15,7 @@ const MainLayout = () => {
 
         <Outlet context={showChat} />
       </main>
+      <ToastContainer />
     </div>
   );
 };
