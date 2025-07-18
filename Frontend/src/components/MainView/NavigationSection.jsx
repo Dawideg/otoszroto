@@ -1,7 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { logout } from "../../api/getData";
+import { toast } from "react-toastify";
 
 const NavigationSection = ({ showChat, setShowChat, userData }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const logoutUser = () => {
+    logout()
+      .then(() => {
+        toast.success("Wylogowano", {
+          onClose: () => {
+            window.location.href = "/";
+          },
+          autoClose: 1000,
+        });
+      })
+      .catch((error) => {
+        console.error("Logout error:", error);
+      });
+  };
   return (
     <div>
       <nav
@@ -41,10 +59,28 @@ const NavigationSection = ({ showChat, setShowChat, userData }) => {
                       {showChat ? "Zamknij czat" : "Czat"}
                     </button>
                   </li>
-                  <p className="mb-0 ms-2 px-3 py-1 rounded border bg-light small fw-semibold shadow-sm">
-                    Zalogowano jako:{" "}
-                    <span className="text-dark">{userData.name}</span>
-                  </p>
+                  <li className="nav-item">
+                    <button
+                      className="mb-0 ms-2 px-3 py-1 rounded border bg-light small fw-semibold shadow-sm d-inline-block text-center"
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                      onClick={logoutUser}
+                      style={{
+                        cursor: "pointer",
+                        width: "220px",
+                        height: "40px",
+                      }}
+                    >
+                      {isHovered ? (
+                        <span className="text-danger">Wyloguj</span>
+                      ) : (
+                        <>
+                          Zalogowano jako:{" "}
+                          <span className="text-dark">{userData.name}</span>
+                        </>
+                      )}
+                    </button>
+                  </li>
                 </div>
               ) : (
                 <>

@@ -84,3 +84,11 @@ export const fetchAllChatHistory = async () => {
   if (!res.ok) throw new Error("Nie udało się pobrać wiadomości");
   return await res.json(); // [{ from, to, text, timestamp }]
 };
+export const logout = async () => {
+  const res = await fetch(`${LOCALHOST}logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Nie udało się wylogować");
+  return await res.json();
+};
