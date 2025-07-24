@@ -1,5 +1,6 @@
 ﻿using Api.Domain.Models;
 using Api.Features.Announcements.Services.BlobStorage;
+using Api.Features.Blob;
 using Api.Features.Chat;
 using Api.Features.Chat.Helpers;
 using Api.Infrastructure.Context;
@@ -125,32 +126,9 @@ app.MapHub<ChatHub>("/chatHub");
 app.MapControllers();
 app.MapIdentityApi<User>();
 
-app.MapGet("/users/me", async (ClaimsPrincipal claims, ApplicationDbContext context) => {
-    string userId = claims.Claims.First(c=>c.Type == ClaimTypes.NameIdentifier).Value;
-    return await context.Users.FindAsync(userId);
-})
-.RequireAuthorization();
 
-app.MapPost("images", async(IFormFile file, IBlobService blobService) => { 
-    using Stream stream = file.OpenReadStream();
-    Guid fileId = await blobService.UploadAsync(stream, file.ContentType);
-    return Results.Ok(fileId);
-})
-    .WithTags("Files")
-    .DisableAntiforgery();
+app.MapBlobEndpoints();
 
-app.MapGet("files/{fileId}", async (Guid fileId, IBlobService blobService) => {
-    FileResponse fileResponse = await blobService.DownloadAsync(fileId);
-    return Results.File(fileResponse.Stream, fileResponse.ContentType);
-})
-    .WithTags("Files")
-    .DisableAntiforgery();
 
-app.MapDelete("files/{fileId}", async (Guid fileId, IBlobService blobService) => {
-    await blobService.DeleteAsync(fileId);
-    return Results.NoContent();
-})
-    .WithTags("Files")
-    .DisableAntiforgery();
 
 app.Run();

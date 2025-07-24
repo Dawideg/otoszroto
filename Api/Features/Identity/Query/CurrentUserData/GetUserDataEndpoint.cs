@@ -3,6 +3,7 @@ using Api.Features.Announcements.Queries.Common;
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace Api.Features.Identity.Query.CurrentUserData
@@ -19,6 +20,10 @@ namespace Api.Features.Identity.Query.CurrentUserData
         }
 
         [HttpGet("api/user")]
+        [SwaggerOperation(
+            Summary = "Get currently logged user",
+            Tags = new[] { "Api" })
+        ]
         public override async Task<ActionResult<GetUserDataDto>> HandleAsync(CancellationToken cancellationToken = default)
         {
 

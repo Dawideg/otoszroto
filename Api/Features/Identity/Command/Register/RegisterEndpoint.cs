@@ -1,6 +1,7 @@
 ﻿using Ardalis.ApiEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Api.Features.Identity.Command.Register
 {
@@ -15,7 +16,11 @@ namespace Api.Features.Identity.Command.Register
             _mediator = mediator;
         }
 
-        [HttpPost("api/auth/register")]
+        [HttpPost("api/register")]
+        [SwaggerOperation(
+            Summary = "Register user",
+            Tags = new[] { "Api" })
+        ]
         public override async Task<ActionResult> HandleAsync([FromBody] RegisterCommand request, CancellationToken cancellationToken = default)
         {
             var result = await _mediator.Send(request, cancellationToken);

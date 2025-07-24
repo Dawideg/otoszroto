@@ -2,6 +2,7 @@
 using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Api.Features.Identity.Query.GetUserNameById
 {
@@ -15,6 +16,10 @@ namespace Api.Features.Identity.Query.GetUserNameById
         }
 
         [HttpGet("api/user/{id}")]
+        [SwaggerOperation(
+            Summary = "Get user by id",
+            Tags = new[] { "Api" })
+        ]
         public async override Task<ActionResult<GetUserNameByIdDto>> HandleAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());

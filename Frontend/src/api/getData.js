@@ -34,7 +34,7 @@ export const getCarApiData = async (path) => {
 };
 export const register = async (params) => {
   console.log(params);
-  const response = await fetch(`${API_URL}auth/register`, {
+  const response = await fetch(`${API_URL}register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params),
