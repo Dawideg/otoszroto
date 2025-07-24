@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../styles/ChatWidget.css";
-import { getData, getDataParams } from "../../api/getData";
+import { FaSpinner } from "react-icons/fa";
+
 const ChatWidget = ({
   brand,
   model,
@@ -12,10 +13,18 @@ const ChatWidget = ({
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [answer, setAnswer] = useState("");
-  const API_URL = import.meta.env.VITE_API_URL;
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const toggleChat = () => setIsOpen(!isOpen);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -34,9 +43,11 @@ const ChatWidget = ({
       ", pojemność silinia: " +
       engine +
       "cm3. Odpowiedz w języku polskim, nie używaj żadnego formatowania tekstu ani customowych czcionek, odpowiedz krótko - 3 - 5 zdań.";
+
     const userMessage = { from: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setIsLoading(true);
 
     try {
       const response = await fetch("https://localhost:7067/api/deepseek/ask", {
@@ -51,6 +62,7 @@ const ChatWidget = ({
         from: "ai",
         text: answerText,
       };
+
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       setMessages((prev) => [
@@ -58,6 +70,8 @@ const ChatWidget = ({
         { from: "ai", text: "Błąd podczas pobierania odpowiedzi." },
       ]);
       console.error("Błąd:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,13 +88,27 @@ const ChatWidget = ({
         >
           Chat z asystentem AI
         </div>
-        <div className="card-body chat-messages">
+
+        <div
+          className="card-body chat-messages"
+          style={{ maxHeight: "500px", overflowY: "auto", paddingRight: "5px" }}
+        >
           {messages.map((msg, idx) => (
             <div key={idx} className={`message ${msg.from}`}>
               {msg.text}
             </div>
           ))}
+
+          {isLoading && (
+            <div className="text-muted d-flex align-items-center gap-2 mt-2">
+              <FaSpinner className="spinner" />
+              <span>Generowanie odpowiedzi...</span>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
         </div>
+
         <div className="card-footer d-flex">
           <input
             className="form-control me-2"
@@ -89,7 +117,11 @@ const ChatWidget = ({
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             placeholder="Napisz wiadomość..."
           />
-          <button className="btn btn-success" onClick={sendMessage}>
+          <button
+            className="btn btn-success"
+            onClick={sendMessage}
+            disabled={isLoading}
+          >
             Wyślij
           </button>
         </div>

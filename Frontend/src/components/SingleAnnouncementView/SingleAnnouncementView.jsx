@@ -6,6 +6,14 @@ import { getDataBodyType } from "../../api/getData";
 import AnnouncementBox from "./AnnouncementBox";
 import UsersChat from "../chat/UsersChat";
 import { useOutletContext } from "react-router-dom";
+import {
+  FaRoad, // przebieg
+  FaGasPump, // paliwo
+  FaCogs, // skrzynia biegów
+  FaCarSide, // nadwozie
+  FaTachometerAlt, // pojemność
+  FaHorse, // moc
+} from "react-icons/fa";
 
 const SingleAnnouncementView = () => {
   const [announcement, setAnnouncement] = useState();
@@ -149,31 +157,43 @@ const SingleAnnouncementView = () => {
       <div className="mt-5">
         <h4 className="fw-bold mb-3">Najważniejsze:</h4>
         <div className="row text-center mb-4">
-          <div className="col-6 col-md-2 mb-3">
-            <div className="fw-bold">
-              {announcement.mileage.toLocaleString()} km
+          <div className="row text-center mb-4">
+            <div className="col-6 col-md-2 mb-3">
+              <div className="fw-bold d-flex justify-content-center align-items-center gap-2">
+                <FaRoad /> {announcement.mileage.toLocaleString()} km
+              </div>
+              <small>Przebieg</small>
             </div>
-            <small>Przebieg</small>
-          </div>
-          <div className="col-6 col-md-2 mb-3">
-            <div className="fw-bold">{announcement.fuelType}</div>
-            <small>Rodzaj paliwa</small>
-          </div>
-          <div className="col-6 col-md-2 mb-3">
-            <div className="fw-bold">{announcement.gearbox}</div>
-            <small>Skrzynia biegów</small>
-          </div>
-          <div className="col-6 col-md-2 mb-3">
-            <div className="fw-bold">{announcement.bodyType}</div>
-            <small>Typ nadwozia</small>
-          </div>
-          <div className="col-6 col-md-2 mb-3">
-            <div className="fw-bold">{announcement.engineCapacity} cm³</div>
-            <small>Pojemność</small>
-          </div>
-          <div className="col-6 col-md-2 mb-3">
-            <div className="fw-bold">{announcement.horsepower} KM</div>
-            <small>Moc</small>
+            <div className="col-6 col-md-2 mb-3">
+              <div className="fw-bold d-flex justify-content-center align-items-center gap-2">
+                <FaGasPump /> {announcement.fuelType}
+              </div>
+              <small>Rodzaj paliwa</small>
+            </div>
+            <div className="col-6 col-md-2 mb-3">
+              <div className="fw-bold d-flex justify-content-center align-items-center gap-2">
+                <FaCogs /> {announcement.gearbox}
+              </div>
+              <small>Skrzynia biegów</small>
+            </div>
+            <div className="col-6 col-md-2 mb-3">
+              <div className="fw-bold d-flex justify-content-center align-items-center gap-2">
+                <FaCarSide /> {announcement.bodyType}
+              </div>
+              <small>Typ nadwozia</small>
+            </div>
+            <div className="col-6 col-md-2 mb-3">
+              <div className="fw-bold d-flex justify-content-center align-items-center gap-2">
+                <FaTachometerAlt /> {announcement.engineCapacity} cm³
+              </div>
+              <small>Pojemność</small>
+            </div>
+            <div className="col-6 col-md-2 mb-3">
+              <div className="fw-bold d-flex justify-content-center align-items-center gap-2">
+                <FaHorse /> {announcement.horsepower} KM
+              </div>
+              <small>Moc</small>
+            </div>
           </div>
         </div>
 
