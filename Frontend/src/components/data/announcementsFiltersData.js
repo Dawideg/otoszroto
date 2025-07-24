@@ -112,3 +112,25 @@ export const carFuelTypes = [
   "Wodór",
   "Inny",
 ];
+
+export const carGearboxTypes = [
+  "Manualna",
+  "Automatyczna",
+  "Półautomatyczna",
+  "CVT",
+  "Inna",
+];
+
+export const carCondition = [
+  "Perfekcyjny",
+  "Bardzo dobry",
+  "Dobry",
+  "Średni",
+  "Słaby",
+  "Bardzo słaby",
+];
+export const carPowerTrain = [
+  "Na przednie koła",
+  "Na tylne koła",
+  "Na wszystkie koła",
+];

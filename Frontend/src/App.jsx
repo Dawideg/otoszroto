@@ -8,6 +8,7 @@ import SingleAnnouncementView from "./components/SingleAnnouncementView/SingleAn
 import "bootstrap-icons/font/bootstrap-icons.css";
 import LoginView from "./components/auth/Login/LoginView";
 import RegisterView from "./components/auth/Register/RegisterView";
+import AddAnnouncementView from "./components/AddAnnouncement/AddAnnouncementView";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -24,6 +25,7 @@ function App() {
             />
             <Route path="login" element={<LoginView />} />
             <Route path="register" element={<RegisterView />} />
+            <Route path="add-announcement" element={<AddAnnouncementView />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -10,6 +10,7 @@ using System.Security.Claims;
 
 namespace Api.Features.Announcements.Commands.CreateAnnouncement
 {
+    [Authorize]
     [ApiController]
     public class CreateAnnouncementEndpoint : EndpointBaseAsync.WithRequest<CreateAnnouncementRequest>.WithActionResult<CreateAnnouncementDto>
     {
@@ -30,7 +31,7 @@ namespace Api.Features.Announcements.Commands.CreateAnnouncement
         public async override Task<ActionResult<CreateAnnouncementDto>> HandleAsync([FromForm] CreateAnnouncementRequest request, CancellationToken cancellationToken = default)
         {
 
-            return Ok( await _mediator.Send(new CreateAnnouncementCommand { announcementRequest = request, CurrentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier) }));
+            return Ok( await _mediator.Send(new CreateAnnouncementCommand { announcementRequest = request }));
         }
     }
 }

@@ -2,7 +2,6 @@
 {
     public class CreateAnnouncementRequest
     {
-        public Guid UserId { get; set; }
         public List<IFormFile> Images { get; set; }
         public double Price { get; set; }
         public string Description { get; set; }

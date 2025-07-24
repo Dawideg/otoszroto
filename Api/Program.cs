@@ -6,6 +6,7 @@ using Api.Infrastructure.Context;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,18 +73,37 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddHttpClient();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<IUserIdProvider, NameIdentifierUserIdProvider>();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(x => x.Value.Errors.Any())
+            .Select(x => new {
+                Field = x.Key,
+                Errors = x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+            });
 
-var app = builder.Build();  
+        return new BadRequestObjectResult(errors);
+    };
+});
 
 
+var corsPolicyName = "MyCorsPolicy";
 
-app.UseCors(policy =>   
-    policy.WithOrigins("https://localhost:5173")
-          .AllowAnyMethod()
-          .AllowAnyHeader()
-          .AllowCredentials()
-);
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicyName,
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:5173", "http://localhost:5000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
 
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -93,6 +113,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.MapSwagger();
 }
+app.UseDeveloperExceptionPage(); // Dodaj przed UseRouting w Program.cs
+
+app.UseCors(corsPolicyName);
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

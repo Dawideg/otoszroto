@@ -3,6 +3,7 @@ using Api.Features.Announcements.Services.BlobStorage;
 using Api.Infrastructure.Context;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Api.Features.Announcements.Commands.CreateAnnouncement
@@ -10,28 +11,34 @@ namespace Api.Features.Announcements.Commands.CreateAnnouncement
     public class CreateAnnouncementCommand : IRequest<CreateAnnouncementDto>
     {
         public required CreateAnnouncementRequest announcementRequest;
-        public string CurrentUserId { get; set; }
     }
     public class CreateAnnouncementCommandHandler : IRequestHandler<CreateAnnouncementCommand, CreateAnnouncementDto>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IBlobService _blobService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public CreateAnnouncementCommandHandler(IApplicationDbContext context,IMapper mapper, IBlobService blobService)
+        public CreateAnnouncementCommandHandler(IApplicationDbContext context,IHttpContextAccessor contextAccessor,IMapper mapper, IBlobService blobService)
         {
             _context = context;
             _mapper = mapper;
             _blobService = blobService;
+            _contextAccessor = contextAccessor;
         }
 
         public async Task<CreateAnnouncementDto> Handle(CreateAnnouncementCommand request, CancellationToken cancellationToken)
         {
-            var announcement = _mapper.Map<Announcement>(request.announcementRequest);
-            if (announcement.UserId == null) {
+            Console.WriteLine(request.announcementRequest);
+            var userId = _contextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+            {
                 throw new UnauthorizedAccessException("Nie zalogowano");
             }
-            announcement.UserId = Guid.Parse(request.CurrentUserId);
+            var announcement = _mapper.Map<Announcement>(request.announcementRequest);
+            announcement.UserId = Guid.Parse(userId);
+
+            announcement.UserId = Guid.Parse(userId);
             foreach (var image in request.announcementRequest.Images)
             {
                 using var stream = image.OpenReadStream();
@@ -41,6 +48,7 @@ namespace Api.Features.Announcements.Commands.CreateAnnouncement
             await _context.Announcements.AddAsync(announcement);
             await _context.SaveChangesAsync(cancellationToken);
             return _mapper.Map<CreateAnnouncementDto>(announcement);
+
         }
     }
 }

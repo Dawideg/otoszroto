@@ -27,13 +27,24 @@ const NavigationSection = ({ showChat, setShowChat, userData }) => {
         style={{ backgroundColor: "#ffffff" }}
       >
         <div className="container-fluid">
-          <Link to={"/"} className="navbar-brand">
-            <img
-              src="../img/otoszrotoLogo.png"
-              alt="logo"
-              style={{ maxWidth: "150px" }}
-            />
-          </Link>
+          <div className="d-flex align-items-center gap-3">
+            <Link to={"/"} className="navbar-brand m-0 p-0">
+              <img
+                src="../img/otoszrotoLogo.png"
+                alt="logo"
+                style={{ maxWidth: "150px" }}
+              />
+            </Link>
+
+            {userData && (
+              <Link
+                to="/add-announcement"
+                className="btn btn-outline-primary fw-semibold"
+              >
+                Dodaj ogłoszenie
+              </Link>
+            )}
+          </div>
 
           <button
             className="navbar-toggler"

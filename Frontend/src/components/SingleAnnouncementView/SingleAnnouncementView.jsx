@@ -150,7 +150,9 @@ const SingleAnnouncementView = () => {
         <h4 className="fw-bold mb-3">Najważniejsze:</h4>
         <div className="row text-center mb-4">
           <div className="col-6 col-md-2 mb-3">
-            <div className="fw-bold">{announcement.mileage}</div>
+            <div className="fw-bold">
+              {announcement.mileage.toLocaleString()} km
+            </div>
             <small>Przebieg</small>
           </div>
           <div className="col-6 col-md-2 mb-3">

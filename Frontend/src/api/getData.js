@@ -92,3 +92,15 @@ export const logout = async () => {
   if (!res.ok) throw new Error("Nie udało się wylogować");
   return await res.json();
 };
+export const addAnnouncement = async (form) => {
+  const res = await fetch("https://localhost:7067/api/announcements", {
+    method: "POST",
+    credentials: "include",
+    body: form,
+  });
+
+  if (!res.ok) {
+    throw new Error("Nie udało się dodać ogłoszenia");
+  }
+  return await res.json();
+};
