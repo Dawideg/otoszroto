@@ -206,14 +206,13 @@ const SingleAnnouncementView = () => {
           Zgłoś
         </div>
         <h4 className="fw-bold mb-3 mt-4">Zobacz także:</h4>
-        <div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
           {feedAnnouncements
-            ? feedAnnouncements.map(
-                (item) =>
-                  item.id != announcement.id && (
-                    <AnnouncementBox key={item.id} announcement={item} />
-                  )
-              )
+            ? feedAnnouncements
+                .filter((item) => item.id !== announcement.id)
+                .map((item) => (
+                  <AnnouncementBox key={item.id} announcement={item} />
+                ))
             : "Ładowanie podobnych ogłoszeń..."}
         </div>
       </div>

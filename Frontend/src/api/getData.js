@@ -5,13 +5,15 @@ const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 export const getData = async (path) => {
   const response = await fetch(`${API_URL}${path}`);
   if (!response.ok) throw new Error("Błąd pobierania danych");
+  console.log(response);
   let data = await response.json();
   return data;
 };
+
 export const getDataParams = async (endpoint, params) => {
   const queryString = new URLSearchParams(params).toString();
   const response = await fetch(
-    `${API_URL}${endpoint}${queryString ? "?" + queryString : ""}`
+    `${API_URL}${endpoint}${queryString ? "?" + queryString : ""}`,
   );
   if (!response.ok) throw new Error("Błąd pobierania danych");
   let data = await response.json();
@@ -19,7 +21,7 @@ export const getDataParams = async (endpoint, params) => {
 };
 export const getDataBodyType = async (endpoint, param) => {
   const response = await fetch(
-    `${API_URL}${endpoint}${"?bodyType=" + param}${"&PageSize=5"}`
+    `${API_URL}${endpoint}${"?bodyType=" + param}${"&PageSize=5"}`,
   );
   if (!response.ok) throw new Error("Błąd pobierania danych");
   let data = await response.json();
@@ -51,7 +53,7 @@ export const login = async (params) => {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(params),
-    }
+    },
   );
   if (!response.ok) throw new Error("Błąd pobierania danych");
   console.log(response);
