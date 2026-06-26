@@ -57,7 +57,12 @@ const AddAnnouncementView = () => {
 
     addAnnouncement(form)
       .then(() => {
-        toast.success("Ogłoszenie dodane!");
+        toast.success("Ogłoszenie dodane!", {
+          onClose: () => {
+            window.location.href = "/";
+          },
+          autoClose: 1000,
+        });
       })
       .catch((err) => {
         toast.error(err.message);

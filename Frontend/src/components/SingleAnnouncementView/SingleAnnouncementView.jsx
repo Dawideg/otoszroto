@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, UseState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchUser, getData } from "../../api/getData";
 import ChatWidget from "./ChatWidget";
-import { getDataBodyType } from "../../api/getData";
+import { getSimmilar } from "../../api/getData";
 import AnnouncementBox from "./AnnouncementBox";
 import UsersChat from "../chat/UsersChat";
 import { useOutletContext } from "react-router-dom";
@@ -38,14 +38,25 @@ const SingleAnnouncementView = () => {
       });
   }, [id]);
   useEffect(() => {
-    getDataBodyType("announcements", announcement?.bodyType)
+    // Jeśli ogłoszenie główne jeszcze się nie pobrało, nie rób nic
+    if (!announcement || !announcement.price || !announcement.brand) {
+      return;
+    }
+
+    getSimmilar(
+      "announcements",
+      announcement.price * 0.5, // Widełki: od 50% ceny
+      announcement.price * 1.5, // Widełki: do 150% ceny
+      announcement.brand,
+    )
       .then((data) => {
         setFeedAnnouncements(data);
       })
       .catch((error) => {
-        console.error(error);
+        console.error("Błąd pobierania podobnych ogłoszeń:", error);
       });
-  }, [announcement]);
+  }, [announcement]); // Efekt odpali się ponownie dopiero, gdy announcement zmieni się z undefined na realne dane
+
   if (announcement === undefined) {
     return <div className="container mt-5">Ładowanie ogłoszenia...</div>;
   }

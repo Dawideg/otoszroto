@@ -9,6 +9,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import LoginView from "./components/auth/Login/LoginView";
 import RegisterView from "./components/auth/Register/RegisterView";
 import AddAnnouncementView from "./components/AddAnnouncement/AddAnnouncementView";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -16,6 +17,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
+        <ScrollToTop></ScrollToTop>
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<CarListView />} />

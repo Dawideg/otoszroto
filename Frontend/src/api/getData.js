@@ -19,9 +19,9 @@ export const getDataParams = async (endpoint, params) => {
   let data = await response.json();
   return data;
 };
-export const getDataBodyType = async (endpoint, param) => {
+export const getSimmilar = async (endpoint, minPrice, maxPrice, brand) => {
   const response = await fetch(
-    `${API_URL}${endpoint}${"?bodyType=" + param}${"&PageSize=5"}`,
+    `${API_URL}${endpoint}${"?brand=" + brand + "&MinPrice=" + minPrice + "&MaxPrice=" + maxPrice}${"&PageSize=5"}`,
   );
   if (!response.ok) throw new Error("Błąd pobierania danych");
   let data = await response.json();
