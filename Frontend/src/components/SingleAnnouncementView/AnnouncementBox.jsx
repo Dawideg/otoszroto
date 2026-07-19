@@ -1,0 +1,40 @@
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Link } from "react-router-dom";
+
+const AnnouncementBox = ({ announcement }) => {
+  const IMAGES_URL = import.meta.env.VITE_IMAGES_URL;
+  return (
+    <div
+      className="card shadow-sm"
+      style={{ width: "17rem", height: "20rem", display: "inline-block" }}
+    >
+      <Link
+        to={`/announcement/${announcement.id}`}
+        style={{ textDecoration: "none" }}
+      >
+        <img
+          style={{ objectFit: "cover", width: "100%", height: "10rem" }} // objectFit: "cover" zapobiegnie zniekształceniu zdjęcia
+          src={`${IMAGES_URL}${announcement.imageUrls[0]}`}
+          className="card-img-top"
+          alt="image"
+        />
+      </Link>
+      <div className="card-body">
+        <h5 className="card-title">
+          {announcement.brand} {announcement.model}
+        </h5>
+        <p className="card-text mb-1 text-muted">
+          {announcement.yearOfProduction} · {announcement.mileage} km ·{" "}
+          {announcement.fuelType}
+        </p>
+        <p className="card-text mb-1 text-muted">
+          <i className="bi bi-geo-alt"></i> {announcement.city}
+        </p>
+        <h5 className="text-danger fw-bold">{announcement.price} PLN</h5>
+      </div>
+    </div>
+  );
+};
+
+export default AnnouncementBox;
