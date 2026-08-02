@@ -30,12 +30,14 @@ builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 
-builder.Services.AddMediatR(cfg => {
+builder.Services.AddMediatR(cfg =>
+{
     cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
 });
 
 // Add services to the container.
-builder.Services.AddSwaggerGen(option => {
+builder.Services.AddSwaggerGen(option =>
+{
     option.EnableAnnotations();
 });
 
@@ -51,7 +53,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
 builder.Services.AddSingleton<IBlobService, BlobService>();
-builder.Services.AddSingleton(serviceProvider => {
+builder.Services.AddSingleton(serviceProvider =>
+{
     var config = serviceProvider.GetRequiredService<IConfiguration>();
     return new BlobServiceClient(config.GetConnectionString("BlobStorage"));
 });
@@ -80,7 +83,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     {
         var errors = context.ModelState
             .Where(x => x.Value.Errors.Any())
-            .Select(x => new {
+            .Select(x => new
+            {
                 Field = x.Key,
                 Errors = x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
             });
@@ -104,17 +108,18 @@ builder.Services.AddCors(options =>
         });
 });
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.MapSwagger();
-}
-app.UseDeveloperExceptionPage(); // Dodaj przed UseRouting w Program.cs
+app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapSwagger();
+
+
+app.UseDeveloperExceptionPage(); 
 
 app.UseCors(corsPolicyName);
 app.UseHttpsRedirection();
