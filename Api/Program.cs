@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Security.Claims;
 
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization();
@@ -26,9 +28,17 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.None;              // pozwala na cross-site wysyłanie
 });
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddMediatR(cfg =>
 {
@@ -45,10 +55,7 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
@@ -108,8 +115,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 
 var app = builder.Build();
 
