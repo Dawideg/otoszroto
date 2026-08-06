@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Security.Claims;
 
+DotNetEnv.Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthorization();
@@ -26,16 +28,26 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.None;              // pozwala na cross-site wysyłanie
 });
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 
-builder.Services.AddMediatR(cfg => {
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddMediatR(cfg =>
+{
     cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
 });
 
 // Add services to the container.
-builder.Services.AddSwaggerGen(option => {
+builder.Services.AddSwaggerGen(option =>
+{
     option.EnableAnnotations();
 });
 
@@ -43,15 +55,13 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
 builder.Services.AddSingleton<IBlobService, BlobService>();
-builder.Services.AddSingleton(serviceProvider => {
+builder.Services.AddSingleton(serviceProvider =>
+{
     var config = serviceProvider.GetRequiredService<IConfiguration>();
     return new BlobServiceClient(config.GetConnectionString("BlobStorage"));
 });
@@ -80,7 +90,8 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     {
         var errors = context.ModelState
             .Where(x => x.Value.Errors.Any())
-            .Select(x => new {
+            .Select(x => new
+            {
                 Field = x.Key,
                 Errors = x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
             });
@@ -97,24 +108,24 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: corsPolicyName,
         policy =>
         {
-            policy.WithOrigins("https://localhost:5174", "http://localhost:5000")
+            policy.WithOrigins("https://localhost:5173", "http://localhost:5000")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
         });
 });
 
+
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.MapSwagger();
-}
-app.UseDeveloperExceptionPage(); // Dodaj przed UseRouting w Program.cs
+app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.MapSwagger();
+
+
+app.UseDeveloperExceptionPage(); 
 
 app.UseCors(corsPolicyName);
 app.UseHttpsRedirection();

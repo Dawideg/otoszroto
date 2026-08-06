@@ -63,31 +63,32 @@ const UsersChat = ({ receiverId, setShowChat }) => {
       .withAutomaticReconnect()
       .build();
 
+    const onReceiveMessage = async (fromUser, msg) => {
+      if (!userNames[fromUser]) {
+        try {
+          const user = await fetchUser(fromUser);
+          setUserNames((prev) => ({ ...prev, [fromUser]: user.name }));
+        } catch (err) {
+          console.error("Błąd pobierania nadawcy:", err);
+        }
+      }
+
+      setMessages((prev) => [...prev, { senderId: fromUser, text: msg }]);
+      if (!selectedUser) setSelectedUser(fromUser);
+    };
+
+    connection.on("ReceiveMessage", onReceiveMessage);
+
     connection
       .start()
-      .then(() => {
-        console.log("Połączono z SignalR");
-
-        connection.on("ReceiveMessage", async (fromUser, msg) => {
-          if (!userNames[fromUser]) {
-            try {
-              const user = await fetchUser(fromUser);
-              setUserNames((prev) => ({ ...prev, [fromUser]: user.name }));
-            } catch (err) {
-              console.error("Błąd pobierania nadawcy:", err);
-            }
-          }
-
-          setMessages((prev) => [...prev, { senderId: fromUser, text: msg }]);
-          if (!selectedUser) setSelectedUser(fromUser);
-        });
-      })
+      .then(() => console.log("Połączono z SignalR"))
       .catch((err) => console.error("Błąd połączenia:", err));
 
     setConnection(connection);
     setSelectedUser(receiverId ?? null);
 
     return () => {
+      connection.off("ReceiveMessage", onReceiveMessage);
       connection
         .stop()
         .catch((err) => console.error("Błąd przy rozłączaniu:", err));
@@ -98,11 +99,8 @@ const UsersChat = ({ receiverId, setShowChat }) => {
     if (!connection || !selectedUser || !message.trim()) return;
 
     try {
-      await connection.invoke("SendPrivateMessage", selectedUser, message);
-      setMessages((prev) => [
-        ...prev,
-        { senderId: currentUserData.id, text: message },
-      ]);
+      const text = message.trim();
+      await connection.invoke("SendPrivateMessage", selectedUser, text);
       setMessage("");
     } catch (err) {
       console.error("Błąd wysyłania wiadomości:", err);

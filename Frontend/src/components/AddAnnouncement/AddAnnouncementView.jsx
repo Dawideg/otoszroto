@@ -41,6 +41,45 @@ const AddAnnouncementView = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+  const generateAIDescription = async () => {
+    const aiQuery = `Sprzedajesz samochód na platformie ogłoszeniowej - wygeneruj opis ogłoszenia samochodu.
+  
+  Marka: ${formData.brand}
+  Model: ${formData.model}
+  Rok produkcji: ${formData.yearOfProduction}
+  Nadwozie: ${formData.bodyType}
+  Przebieg: ${formData.mileage} km
+  Pojemność: ${formData.engineCapacity} cm3
+  Moc: ${formData.horsepower} KM
+  Paliwo: ${formData.fuelType}
+  Skrzynia: ${formData.gearbox}
+  Napęd: ${formData.powertrain}
+  
+  Napisz krótki opis (3-5 zdań) po polsku. Nie używaj markdown, pogrubień ani punktów, nie dodawaj żadnego wstępu i zakończenia. `;
+  
+    try {
+      const response = await fetch("https://localhost:7067/api/deepseek/ask", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: aiQuery }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Błąd podczas generowania opisu.");
+      }
+
+      const data = await response.text();
+      setFormData((prev) => ({ ...prev, description: data, }));
+  
+      return await response.text();
+    } catch (error) {
+      console.error(error);
+      toast.error("Nie udało się wygenerować opisu.");
+      return "";
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,7 +107,17 @@ const AddAnnouncementView = () => {
         toast.error(err.message);
       });
   };
-
+  const canGenerateDescription =
+  formData.brand &&
+  formData.model &&
+  formData.yearOfProduction &&
+  formData.bodyType &&
+  formData.mileage &&
+  formData.engineCapacity &&
+  formData.horsepower &&
+  formData.fuelType &&
+  formData.gearbox &&
+  formData.powertrain;
   return (
     <div className="container mt-5 shadow p-4">
       <h3>Dodaj ogłoszenie</h3>
@@ -270,14 +319,35 @@ const AddAnnouncementView = () => {
         </div>
 
         <div className="col-12">
-          <label className="form-label">Opis</label>
-          <textarea
-            className="form-control"
-            name="description"
-            rows="3"
-            onChange={handleChange}
-          ></textarea>
-        </div>
+  <div className="d-flex justify-content-between align-items-center mb-2">
+    <label className="form-label mb-0">Opis</label>
+
+    <button
+      type="button"
+      className={`btn ${
+        canGenerateDescription ? "btn-primary" : "btn-secondary"
+      } rounded-pill px-4 fw-semibold`}
+      disabled={!canGenerateDescription}
+      onClick={generateAIDescription}
+    >
+      🤖 Wygeneruj opis AI
+    </button>
+  </div>
+
+  {!canGenerateDescription && (
+    <small className="text-muted d-block mb-2">
+      Uzupełnij podstawowe dane samochodu, aby wygenerować opis.
+    </small>
+  )}
+
+  <textarea
+    className="form-control"
+    name="description"
+    rows="6"
+    value={formData.description}
+    onChange={handleChange}
+  />
+</div>
 
         <div className="col-md-6">
           <label className="form-label">Miasto</label>

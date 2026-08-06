@@ -4,22 +4,21 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
 
+
 namespace Api.Features.Deepseek
 {
     public class AskDeepseekHandler : IRequestHandler<AskDeepseekCommand, string>
     {
         private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration;
 
-        public AskDeepseekHandler(HttpClient httpClient, IConfiguration configuration)
+        public AskDeepseekHandler(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _configuration = configuration;
         }
 
         public async Task<string> Handle(AskDeepseekCommand request, CancellationToken cancellationToken)
         {
-            var apiKey = _configuration["DeepSeek:ApiKey"];
+            var apiKey = Environment.GetEnvironmentVariable("API_KEY");
             var requestBody = new
             {
                 model = "deepseek-chat",
